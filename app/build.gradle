@@ -20,6 +20,10 @@ android {
         }
     }
 
+    buildFeatures {
+        viewBinding true
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -74,5 +78,4 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
 }
 
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.google.gms.google-services'
