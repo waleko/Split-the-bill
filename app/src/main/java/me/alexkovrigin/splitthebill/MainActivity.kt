@@ -11,7 +11,6 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.google.firebase.FirebaseApp
 import me.alexkovrigin.splitthebill.ui.theme.SplitTheBillTheme
 
 class MainActivity : ComponentActivity() {

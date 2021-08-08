@@ -25,13 +25,14 @@ class QRCodeAnalyzer(val listener: (String) -> Unit) : ImageAnalysis.Analyzer {
             if (mediaImage != null) {
                 val rotation = imageProxy.imageInfo.rotationDegrees / 90
                 val firebaseVisionImage = FirebaseVisionImage.fromMediaImage(mediaImage, rotation)
-                barcodeScanner.detectInImage(firebaseVisionImage).addOnCompleteListener { barcodes ->
-                    barcodes.result
-                        ?.mapNotNull { it.rawValue }
-                        ?.forEach { value ->
-                            listener(value)
-                        }
-                }
+                barcodeScanner.detectInImage(firebaseVisionImage)
+                    .addOnCompleteListener { barcodes ->
+                        barcodes.result
+                            ?.mapNotNull { it.rawValue }
+                            ?.forEach { value ->
+                                listener(value)
+                            }
+                    }
             }
         }
     }
