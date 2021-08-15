@@ -1,5 +1,7 @@
 package me.alexkovrigin.splitthebill.services.api
 
 data class TicketIdResponse(
-    val id: String
+    val kind: String,
+    val id: String,
+    val status: Int
 )

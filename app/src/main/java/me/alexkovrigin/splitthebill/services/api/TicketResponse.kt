@@ -5,4 +5,7 @@ data class TicketResponse(
 ) {
     data class _doc(val receipt: Receipt)
     data class _ticket(val document: _doc)
+
+    val receipt: Receipt
+        get() = ticket.document.receipt
 }

@@ -15,4 +15,27 @@ sealed class Result<out T : Any> {
             is Error -> "Error[exception=$exception]"
         }
     }
+
+    /**
+     * Effectively casts [Result] to [Success]. If cast has failed, throws stored [Error.exception] of the result.
+     */
+    fun orThrowException(): Success<T> {
+        return when(this) {
+            is Success -> this
+            is Error -> throw exception
+        }
+    }
+
+    /**
+     * True if result is [Success], false otherwise.
+     */
+    val isSuccess
+        get() = this is Success
+
+    /**
+     * True if result is [Error], false otherwise.
+     */
+    val isError
+        get() = !isSuccess
+
 }

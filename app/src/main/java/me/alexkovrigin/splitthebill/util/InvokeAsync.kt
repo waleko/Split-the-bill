@@ -8,9 +8,9 @@ import retrofit2.Callback
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
 
-suspend fun <T> Call<T>.invokeAsync(): T = doInvokeAsync()
+suspend inline fun <reified T> Call<T>.invokeAsync(): T = doInvokeAsync()
 
-suspend fun <T> Call<T>.invokeAsyncAndAlso(also: () -> Unit = {}): T = doInvokeAsync(also)
+suspend inline fun <reified T> Call<T>.invokeAsyncAndAlso(also: () -> Unit = {}): T = doInvokeAsync(also)
 
 open class SuspendAwareThrowable(message: String? = null) : Throwable(message) {
     private val _cause = AtomicReference<Throwable>(null)
@@ -24,16 +24,25 @@ open class SuspendAwareThrowable(message: String? = null) : Throwable(message) {
         }
 }
 class CallNotExecutedException(message: String?) : SuspendAwareThrowable(message)
-internal class CallFailedException(message: String?, code: Int) : CancellationException("$message, code: $code")
+class CallFailedException(message: String?, code: Int) : CancellationException("$message, code: $code")
 
-internal suspend fun <T> Call<T>.doInvokeAsync(meanwhile: () -> Unit = {}): T {
+suspend inline fun <reified T> Call<T>.doInvokeAsync(meanwhile: () -> Unit = {}): T {
     val channel = Channel<T>(capacity = UNLIMITED)
     val callSite = CallNotExecutedException(request().url().toString()) // remember invocation point
     enqueue(object : Callback<T> {
         override fun onResponse(call: Call<T>, response: retrofit2.Response<T>) {
             val result = response.body()
-            if (result != null && call.isExecuted && response.isSuccessful) {
-                channel.offer(result)
+            // if call shall not return anything
+            val isUnitReturnType = T::class == Unit::class
+            // if executed, successful, and either if body is not empty, or the call shall not return anything
+            if (call.isExecuted && response.isSuccessful && (result != null || isUnitReturnType)) {
+                channel.offer( // FIXME
+                    // if nothing shall be returned, return `Unit` (instead of null)
+                    if (isUnitReturnType)
+                        Unit as T
+                    else
+                        result ?: /* This case can never be achieved */ error("Logic error")
+                )
             } else {
                 channel.cancel(CallFailedException(response.errorBody()?.string(), response.code()))
             }
