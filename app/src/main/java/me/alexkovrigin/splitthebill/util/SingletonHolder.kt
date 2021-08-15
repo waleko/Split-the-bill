@@ -1,6 +1,6 @@
 package me.alexkovrigin.splitthebill.util
 
-open class SingletonHolder<out T: Any, in A>(private val creator: (A) -> T) {
+open class SingletonHolder<out T : Any, in A>(private val creator: (A) -> T) {
     @Volatile
     private var instance: T? = null
     private val lock = Any()

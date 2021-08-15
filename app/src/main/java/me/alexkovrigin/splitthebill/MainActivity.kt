@@ -16,11 +16,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
-import me.alexkovrigin.splitthebill.ui.CameraScreen
-import me.alexkovrigin.splitthebill.ui.PhoneEnterScreen
-import me.alexkovrigin.splitthebill.ui.QRInfoScreen
-import me.alexkovrigin.splitthebill.ui.SMSCodeScreen
 import me.alexkovrigin.splitthebill.ui.theme.SplitTheBillTheme
+import me.alexkovrigin.splitthebill.ui.views.CameraScreen
+import me.alexkovrigin.splitthebill.ui.views.PhoneEnterScreen
+import me.alexkovrigin.splitthebill.ui.views.QRInfoScreen
+import me.alexkovrigin.splitthebill.ui.views.SMSCodeScreen
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -87,7 +87,10 @@ class MainActivity : ComponentActivity() {
                                         if (found)
                                             return@synchronized
                                         println("Checking $qr")
-                                        if (Regex("t=\\d{8}.*&s=[\\d.]*&fn=\\d*&i=\\d*&fp=\\d*&n=\\d*").matchEntire(qr) == null)
+                                        if (Regex("t=\\d{8}.*&s=[\\d.]*&fn=\\d*&i=\\d*&fp=\\d*&n=\\d*").matchEntire(
+                                                qr
+                                            ) == null
+                                        )
                                             return@synchronized
                                         found = true
                                         navController.navigate("ticketInfo/$qr")

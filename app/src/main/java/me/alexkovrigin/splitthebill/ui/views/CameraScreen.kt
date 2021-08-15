@@ -1,7 +1,5 @@
-package me.alexkovrigin.splitthebill.ui
+package me.alexkovrigin.splitthebill.ui.views
 
-import android.content.Context
-import android.content.pm.PackageManager
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.camera.core.CameraSelector
@@ -12,15 +10,10 @@ import androidx.camera.view.PreviewView
 import androidx.compose.material.Button
 import androidx.compose.runtime.Composable
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.common.util.concurrent.ListenableFuture
-import me.alexkovrigin.splitthebill.CAMERA_PERMISSIONS
-import me.alexkovrigin.splitthebill.CAMERA_REQUEST_CODE
-import me.alexkovrigin.splitthebill.CameraActivity
 import me.alexkovrigin.splitthebill.services.QRCodeAnalyzer
 import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 
 /* FIXME: either fix camerascreen lifecycle + permissions, or connect cameraactivity to navcontroller
 
@@ -38,7 +31,11 @@ fun CameraScreen(
 }
 
 @Composable
-fun CameraScreen(componentActivity: ComponentActivity, cameraExecutor: ExecutorService, qrScanListener: (String) -> Unit) {
+fun CameraScreen(
+    componentActivity: ComponentActivity,
+    cameraExecutor: ExecutorService,
+    qrScanListener: (String) -> Unit
+) {
     CameraScreen(componentActivity) { previewView ->
         addListener({
             // Used to bind the lifecycle of cameras to the lifecycle owner

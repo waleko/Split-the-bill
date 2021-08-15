@@ -1,4 +1,4 @@
-package me.alexkovrigin.splitthebill.ui
+package me.alexkovrigin.splitthebill.ui.views
 
 import android.util.Log
 import androidx.compose.foundation.layout.Column
@@ -13,7 +13,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
-import kotlinx.coroutines.runBlocking
 import me.alexkovrigin.splitthebill.ui.theme.SplitTheBillTheme
 
 @Composable
@@ -23,7 +22,7 @@ fun PhoneEnterScreen(sendLoginCode: (String) -> Unit) {
         Surface(color = MaterialTheme.colors.background) {
             Column {
                 var text by rememberSaveable { mutableStateOf("") }
-                TextField(value = text, onValueChange = {text = it})
+                TextField(value = text, onValueChange = { text = it })
                 Button(onClick = {
                     sendLoginCode(text)
                     Log.d("PhoneEnterActivity", "Sent!")
@@ -38,5 +37,5 @@ fun PhoneEnterScreen(sendLoginCode: (String) -> Unit) {
 @Preview
 @Composable
 fun PhoneEnterPreview() {
-    PhoneEnterScreen(sendLoginCode = {println(it)})
+    PhoneEnterScreen(sendLoginCode = { println(it) })
 }

@@ -10,7 +10,8 @@ import java.util.concurrent.atomic.AtomicReference
 
 suspend inline fun <reified T> Call<T>.invokeAsync(): T = doInvokeAsync()
 
-suspend inline fun <reified T> Call<T>.invokeAsyncAndAlso(also: () -> Unit = {}): T = doInvokeAsync(also)
+suspend inline fun <reified T> Call<T>.invokeAsyncAndAlso(also: () -> Unit = {}): T =
+    doInvokeAsync(also)
 
 open class SuspendAwareThrowable(message: String? = null) : Throwable(message) {
     private val _cause = AtomicReference<Throwable>(null)
@@ -19,12 +20,17 @@ open class SuspendAwareThrowable(message: String? = null) : Throwable(message) {
         get() = _cause.get()
         set(value) {
             if (!_cause.compareAndSet(null, value)) {
-                throw IllegalStateException("Cannot modify cause because it's already set (see cause of this one)", _cause.get())
+                throw IllegalStateException(
+                    "Cannot modify cause because it's already set (see cause of this one)",
+                    _cause.get()
+                )
             }
         }
 }
+
 class CallNotExecutedException(message: String?) : SuspendAwareThrowable(message)
-class CallFailedException(message: String?, code: Int) : CancellationException("$message, code: $code")
+class CallFailedException(message: String?, code: Int) :
+    CancellationException("$message, code: $code")
 
 suspend inline fun <reified T> Call<T>.doInvokeAsync(meanwhile: () -> Unit = {}): T {
     val channel = Channel<T>(capacity = UNLIMITED)
@@ -47,8 +53,12 @@ suspend inline fun <reified T> Call<T>.doInvokeAsync(meanwhile: () -> Unit = {})
                 channel.cancel(CallFailedException(response.errorBody()?.string(), response.code()))
             }
         }
+
         override fun onFailure(call: Call<T>, t: Throwable) {
-            channel.cancel(t as? CancellationException ?: CancellationException("invokeAsync failed: ${t.message}", t))
+            channel.cancel(
+                t as? CancellationException
+                    ?: CancellationException("invokeAsync failed: ${t.message}", t)
+            )
         }
     })
     meanwhile()
@@ -64,7 +74,8 @@ suspend inline fun <reified T> Call<T>.doInvokeAsync(meanwhile: () -> Unit = {})
 fun <T> List<Call<T>>.invokeAsync(): Channel<CallResult<T>> = doInvokeAsync()
 
 @JvmName(name = "invokeAsyncAndAlsoParallel")
-fun <T> List<Call<T>>.invokeAsyncAndAlso(also: () -> Unit = {}): Channel<CallResult<T>> = doInvokeAsync(also)
+fun <T> List<Call<T>>.invokeAsyncAndAlso(also: () -> Unit = {}): Channel<CallResult<T>> =
+    doInvokeAsync(also)
 
 @JvmName(name = "doInvokeAsyncParallel")
 fun <T> List<Call<T>>.doInvokeAsync(meanwhile: () -> Unit = {}): Channel<CallResult<T>> {
@@ -84,7 +95,10 @@ fun <T> List<Call<T>>.doInvokeAsync(meanwhile: () -> Unit = {}): Channel<CallRes
                     channel.offer(
                         CallResult(
                             call = call,
-                            error = CallFailedException(response.errorBody()?.string(), response.code())
+                            error = CallFailedException(
+                                response.errorBody()?.string(),
+                                response.code()
+                            )
                         )
                     )
                 }
@@ -110,7 +124,7 @@ fun <T> List<Call<T>>.doInvokeAsync(meanwhile: () -> Unit = {}): Channel<CallRes
     return channel
 }
 
-object NoError: Throwable()
+object NoError : Throwable()
 
 data class CallResult<T>(
     val call: Call<T>,

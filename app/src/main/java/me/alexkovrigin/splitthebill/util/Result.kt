@@ -20,7 +20,7 @@ sealed class Result<out T : Any> {
      * Effectively casts [Result] to [Success]. If cast has failed, throws stored [Error.exception] of the result.
      */
     fun orThrowException(): Success<T> {
-        return when(this) {
+        return when (this) {
             is Success -> this
             is Error -> throw exception
         }
@@ -37,5 +37,4 @@ sealed class Result<out T : Any> {
      */
     val isError
         get() = !isSuccess
-
 }

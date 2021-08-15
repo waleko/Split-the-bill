@@ -14,8 +14,8 @@ import me.alexkovrigin.splitthebill.services.api.RequestSMSInfo
 import me.alexkovrigin.splitthebill.services.api.TicketResponse
 import me.alexkovrigin.splitthebill.services.api.client_secret
 import me.alexkovrigin.splitthebill.util.CallNotExecutedException
-import me.alexkovrigin.splitthebill.util.SingletonHolder
 import me.alexkovrigin.splitthebill.util.Result
+import me.alexkovrigin.splitthebill.util.SingletonHolder
 import me.alexkovrigin.splitthebill.util.invokeAsync
 import okhttp3.Authenticator
 import okhttp3.OkHttpClient
@@ -124,7 +124,8 @@ class Repository private constructor(private val context: Context) :
     }
 
     suspend fun verifyPhoneWithCode(phone: String, code: String): Result<Unit> = simpleRequestTry {
-        val authInfo = api.sendLoginCode(LoginCodeInfo(client_secret, phone, code), authHeaders).invokeAsync()
+        val authInfo =
+            api.sendLoginCode(LoginCodeInfo(client_secret, phone, code), authHeaders).invokeAsync()
         PreferenceManager
             .getDefaultSharedPreferences(context)
             .edit()
@@ -135,7 +136,8 @@ class Repository private constructor(private val context: Context) :
     }
 
     suspend fun getTicketId(qr: String): Result<String> = simpleRequestTry {
-        val response = api.getTicketId(QRCodeInfo(qr), getSessionIdOrEmpty(), authHeaders).invokeAsync()
+        val response =
+            api.getTicketId(QRCodeInfo(qr), getSessionIdOrEmpty(), authHeaders).invokeAsync()
         Result.Success(response.id)
     }
 
@@ -153,6 +155,5 @@ class Repository private constructor(private val context: Context) :
         PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_REFRESH_TOKEN, null)
 
     override fun onSharedPreferenceChanged(p0: SharedPreferences?, p1: String?) {
-
     }
 }

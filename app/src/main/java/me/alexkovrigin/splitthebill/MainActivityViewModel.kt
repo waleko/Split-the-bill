@@ -4,15 +4,12 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import me.alexkovrigin.splitthebill.data.Repository
 import me.alexkovrigin.splitthebill.services.api.Receipt
 import me.alexkovrigin.splitthebill.util.Result
-import kotlin.coroutines.suspendCoroutine
 
-class MainActivityViewModel(app: Application): AndroidViewModel(app) {
+class MainActivityViewModel(app: Application) : AndroidViewModel(app) {
     private val repo = Repository.getInstance(app.applicationContext)
 
     val isAuthenticated: Boolean
@@ -46,31 +43,34 @@ class MainActivityViewModel(app: Application): AndroidViewModel(app) {
         }
     }
 
-    fun enterPhoneAsync(phone: String, onSuccess: suspend (Unit) -> Unit) = generateCallbackFunction(
-        mainBody = {
-            val formatted = formatPhone(phone) ?: error("Phone format is invalid")
-            repo.sendLoginCode(formatted)
-        },
-        onSuccess = onSuccess
-    )
+    fun enterPhoneAsync(phone: String, onSuccess: suspend (Unit) -> Unit) =
+        generateCallbackFunction(
+            mainBody = {
+                val formatted = formatPhone(phone) ?: error("Phone format is invalid")
+                repo.sendLoginCode(formatted)
+            },
+            onSuccess = onSuccess
+        )
 
-    fun enterCodeAsync(phone: String, code: String, onSuccess: suspend (Unit) -> Unit) = generateCallbackFunction(
-        mainBody = {
-            val formatted = formatPhone(phone) ?: error("Phone format is invalid")
-            repo.verifyPhoneWithCode(formatted, code)
-        },
-        onSuccess = onSuccess
-    )
+    fun enterCodeAsync(phone: String, code: String, onSuccess: suspend (Unit) -> Unit) =
+        generateCallbackFunction(
+            mainBody = {
+                val formatted = formatPhone(phone) ?: error("Phone format is invalid")
+                repo.verifyPhoneWithCode(formatted, code)
+            },
+            onSuccess = onSuccess
+        )
 
-    fun getReceiptAsync(qr: String, onSuccess: suspend (receipt: Pair<String, Receipt>) -> Unit) = generateCallbackFunction(
-        mainBody = {
-            val ticketIdResponse = repo.getTicketId(qr)
-            val ticketId = ticketIdResponse.orThrowException().data
-            val ticketResponse = repo.getTicket(ticketId)
-            val ticket = ticketResponse.orThrowException().data
-            val receipt = ticket.receipt
-            Result.Success(ticketId to receipt)
-        },
-        onSuccess = onSuccess
-    )
+    fun getReceiptAsync(qr: String, onSuccess: suspend (receipt: Pair<String, Receipt>) -> Unit) =
+        generateCallbackFunction(
+            mainBody = {
+                val ticketIdResponse = repo.getTicketId(qr)
+                val ticketId = ticketIdResponse.orThrowException().data
+                val ticketResponse = repo.getTicket(ticketId)
+                val ticket = ticketResponse.orThrowException().data
+                val receipt = ticket.receipt
+                Result.Success(ticketId to receipt)
+            },
+            onSuccess = onSuccess
+        )
 }
