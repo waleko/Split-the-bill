@@ -15,15 +15,14 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
-import com.google.common.util.concurrent.ListenableFuture
 import me.alexkovrigin.splitthebill.services.QRCodeAnalyzer
 import java.util.concurrent.Executor
 
 @Composable
 fun SimpleCameraPreview(
-    qrScanListener: (String) -> Unit,
+    navigateToQR: (qr: String) -> Unit,
     modifier: Modifier = Modifier,
-    scaleType: PreviewView.ScaleType = PreviewView.ScaleType.FILL_CENTER,
+    scaleType: PreviewView.ScaleType = PreviewView.ScaleType.FILL_CENTER
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
@@ -47,13 +46,28 @@ fun SimpleCameraPreview(
                 // Used to bind the lifecycle of cameras to the lifecycle owner
                 val cameraProvider = cameraProviderFuture.get()
 
+                val lock = Any()
+                var found = false
+
                 bindToLifecycle(
                     lifecycleOwner,
                     previewView,
                     cameraProvider,
-                    executor,
-                    qrScanListener
-                )
+                    executor
+                ) { qr ->
+                    synchronized(lock) {
+                        if (found)
+                            return@synchronized
+                        Log.d("CameraScreen", "Processing $qr")
+                        if (Regex("t=\\d{8}.*&s=[\\d.]*&fn=\\d*&i=\\d*&fp=\\d*&n=\\d*").matchEntire(
+                                qr
+                            ) == null
+                        )
+                            return@synchronized
+                        found = true
+                        navigateToQR(qr)
+                    }
+                }
 
             }, executor)
 

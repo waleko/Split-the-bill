@@ -3,6 +3,8 @@ package me.alexkovrigin.splitthebill
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import me.alexkovrigin.splitthebill.data.Repository
@@ -73,4 +75,17 @@ class MainActivityViewModel(app: Application) : AndroidViewModel(app) {
             },
             onSuccess = onSuccess
         )
+
+    fun getLiveReceipt(qr: String): LiveData<Receipt> {
+        val data = MutableLiveData<Receipt>()
+        getReceiptAsync(qr, onSuccess = {
+            data.value = it.second
+        })
+        return data
+    }
+
+    /**
+     * Debug only. Remove on production
+     */
+    fun clearCredentials() = repo.clearCredentials()
 }

@@ -13,23 +13,32 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
+import me.alexkovrigin.splitthebill.MainActivityViewModel
 import me.alexkovrigin.splitthebill.ui.theme.SplitTheBillTheme
 
 @Composable
-fun SMSCodeScreen(phone: String, verifyPhoneWithCode: (phone: String, code: String) -> Unit) {
+fun SMSCodeScreen(
+    phone: String,
+    navigateToHome: () -> Unit,
+    viewModel: MainActivityViewModel = viewModel(MainActivityViewModel::class.java),
+) {
     SplitTheBillTheme {
         // A surface container using the 'background' color from the theme
         Surface(color = MaterialTheme.colors.background) {
             Column {
-                var text by rememberSaveable { mutableStateOf("") }
+                var codeInput by rememberSaveable { mutableStateOf("") }
                 var isError by rememberSaveable { mutableStateOf(false) }
-                TextField(value = text, maxLines = 1, isError = isError, onValueChange = {
-                    text = it
+
+                TextField(value = codeInput, maxLines = 1, isError = isError, onValueChange = {
+                    codeInput = it
                     isError = Regex("\\d{4}").matchEntire(it) == null
                 })
                 Button(onClick = {
-                    verifyPhoneWithCode(phone, text)
-                    Log.d("SMSCodeScreen", "Code verified")
+                    viewModel.enterCodeAsync(phone, codeInput) {
+                        Log.d("SMSCodeScreen", "Code verified")
+                        navigateToHome()
+                    }
                 }) {
                     Text("Verify phone")
                 }
@@ -41,5 +50,5 @@ fun SMSCodeScreen(phone: String, verifyPhoneWithCode: (phone: String, code: Stri
 @Preview
 @Composable
 fun SMSCodeScreenPreview() {
-    SMSCodeScreen("") { a, b -> println("$a $b") }
+    SMSCodeScreen("+7 (800) 000-00-00", navigateToHome = {})
 }

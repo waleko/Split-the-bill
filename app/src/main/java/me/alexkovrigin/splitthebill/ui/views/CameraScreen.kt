@@ -11,15 +11,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionRequired
 import com.google.accompanist.permissions.rememberPermissionState
+import me.alexkovrigin.splitthebill.MainActivityViewModel
 
 @ExperimentalPermissionsApi
 @Composable
 fun CameraScreen(
-    qrScanListener: (String) -> Unit,
-    returnToHomeScreen: () -> Unit
+    navigateToQR: (qr: String) -> Unit,
+    navigateHome: () -> Unit,
+    viewModel: MainActivityViewModel = viewModel(MainActivityViewModel::class.java),
 ) {
     val cameraPermissionState = rememberPermissionState(android.Manifest.permission.CAMERA)
     PermissionRequired(
@@ -33,7 +36,7 @@ fun CameraScreen(
                         Text("Accept")
                     }
                     Spacer(Modifier.width(8.dp))
-                    Button(onClick = returnToHomeScreen) {
+                    Button(onClick = navigateHome) {
                         Text("Decline")
                     }
                 }
@@ -47,14 +50,14 @@ fun CameraScreen(
                         "Please, grant us access on the Settings screen."
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                Button(onClick = {/*FIXME*/}) {
+                Button(onClick = {/*FIXME*/ }) {
                     Text("Open Settings")
                 }
             }
         }
     ) {
         ConstraintLayout {
-            SimpleCameraPreview(qrScanListener)
+            SimpleCameraPreview(navigateToQR = navigateToQR)
         }
     }
 }

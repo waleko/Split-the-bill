@@ -146,6 +146,18 @@ class Repository private constructor(private val context: Context) :
         Result.Success(response)
     }
 
+    /**
+     * Debug only. Remove on production
+     */
+    fun clearCredentials() {
+        PreferenceManager
+            .getDefaultSharedPreferences(context)
+            .edit()
+            .putString(PREF_SESSION_ID, null)
+            .putString(PREF_REFRESH_TOKEN, null)
+            .apply()
+    }
+
     private fun getSessionId() =
         PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_SESSION_ID, null)
 
