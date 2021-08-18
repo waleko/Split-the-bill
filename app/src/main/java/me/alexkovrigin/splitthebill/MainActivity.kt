@@ -66,6 +66,7 @@ class MainActivity : ComponentActivity() {
                             CameraScreen(
                                 navigateHome = { navController.navigate("home") },
                                 navigateToQR = { qr ->
+                                    viewModel.loadReceiptAsync(qr, onSuccess = {})
                                     navController.navigate("ticketInfo/$qr")
                                 },
                                 viewModel = viewModel

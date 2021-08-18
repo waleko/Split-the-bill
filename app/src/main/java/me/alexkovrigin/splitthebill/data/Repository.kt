@@ -3,15 +3,19 @@ package me.alexkovrigin.splitthebill.data
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.preference.PreferenceManager
 import me.alexkovrigin.splitthebill.PREF_REFRESH_TOKEN
 import me.alexkovrigin.splitthebill.PREF_SESSION_ID
+import me.alexkovrigin.splitthebill.data.entity.Item
+import me.alexkovrigin.splitthebill.data.entity.Receipt
+import me.alexkovrigin.splitthebill.data.entity.ReceiptWithItems
 import me.alexkovrigin.splitthebill.services.api.FNSApi
 import me.alexkovrigin.splitthebill.services.api.LoginCodeInfo
 import me.alexkovrigin.splitthebill.services.api.QRCodeInfo
+import me.alexkovrigin.splitthebill.services.api.ReceiptInfo
 import me.alexkovrigin.splitthebill.services.api.RefreshSessionInfo
 import me.alexkovrigin.splitthebill.services.api.RequestSMSInfo
-import me.alexkovrigin.splitthebill.services.api.TicketResponse
 import me.alexkovrigin.splitthebill.services.api.client_secret
 import me.alexkovrigin.splitthebill.util.CallNotExecutedException
 import me.alexkovrigin.splitthebill.util.Result
@@ -24,6 +28,8 @@ import okhttp3.Response
 import okhttp3.Route
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import kotlin.math.log
+import kotlin.random.Random
 
 class Repository private constructor(private val context: Context) :
     SharedPreferences.OnSharedPreferenceChangeListener, Authenticator {
@@ -67,6 +73,8 @@ class Repository private constructor(private val context: Context) :
         response.request().header("sessionId") != null
 
     private val api: FNSApi = buildFNSApi()
+
+    private val dao = BillDatabase.getInstance(context).dao()
 
     private fun buildFNSApi(): FNSApi {
         return Retrofit.Builder()
@@ -135,16 +143,22 @@ class Repository private constructor(private val context: Context) :
         Result.Success(Unit)
     }
 
-    suspend fun getTicketId(qr: String): Result<String> = simpleRequestTry {
-        val response =
+    suspend fun getReceipt(qr: String): Result<Unit> = simpleRequestTry {
+        if (dao.doesReceiptWithQRExist(qr)) {
+            Log.d(logTag, "Receipt $qr already loaded!")
+            return@simpleRequestTry Result.Success(Unit)
+        }
+
+        val ticketIdResponse =
             api.getTicketId(QRCodeInfo(qr), getSessionIdOrEmpty(), authHeaders).invokeAsync()
-        Result.Success(response.id)
+        val ticketId = ticketIdResponse.id
+        val response = api.getTicket(ticketId, getSessionIdOrEmpty(), authHeaders).invokeAsync()
+        val receiptInfo = response.receipt
+        dao.insertReceiptInfo(qr, receiptInfo)
+        Result.Success(Unit)
     }
 
-    suspend fun getTicket(ticketId: String): Result<TicketResponse> = simpleRequestTry {
-        val response = api.getTicket(ticketId, getSessionIdOrEmpty(), authHeaders).invokeAsync()
-        Result.Success(response)
-    }
+    fun loadReceipt(qr: String): LiveData<ReceiptWithItems?> = dao.receiptWithItemsByQR(qr)
 
     /**
      * Debug only. Remove on production

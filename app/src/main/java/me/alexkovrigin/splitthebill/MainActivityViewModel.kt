@@ -8,7 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import me.alexkovrigin.splitthebill.data.Repository
-import me.alexkovrigin.splitthebill.services.api.Receipt
+import me.alexkovrigin.splitthebill.services.api.ReceiptInfo
 import me.alexkovrigin.splitthebill.util.Result
 
 class MainActivityViewModel(app: Application) : AndroidViewModel(app) {
@@ -63,26 +63,15 @@ class MainActivityViewModel(app: Application) : AndroidViewModel(app) {
             onSuccess = onSuccess
         )
 
-    fun getReceiptAsync(qr: String, onSuccess: suspend (receipt: Pair<String, Receipt>) -> Unit) =
+    fun loadReceiptAsync(qr: String, onSuccess: suspend (Unit) -> Unit) =
         generateCallbackFunction(
             mainBody = {
-                val ticketIdResponse = repo.getTicketId(qr)
-                val ticketId = ticketIdResponse.orThrowException().data
-                val ticketResponse = repo.getTicket(ticketId)
-                val ticket = ticketResponse.orThrowException().data
-                val receipt = ticket.receipt
-                Result.Success(ticketId to receipt)
+                repo.getReceipt(qr)
             },
             onSuccess = onSuccess
         )
 
-    fun getLiveReceipt(qr: String): LiveData<Receipt> {
-        val data = MutableLiveData<Receipt>()
-        getReceiptAsync(qr, onSuccess = {
-            data.value = it.second
-        })
-        return data
-    }
+    fun getReceiptFromDB(qr: String) = repo.loadReceipt(qr)
 
     /**
      * Debug only. Remove on production

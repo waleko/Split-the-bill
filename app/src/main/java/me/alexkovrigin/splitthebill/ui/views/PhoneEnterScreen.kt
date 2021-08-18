@@ -22,21 +22,16 @@ fun PhoneEnterScreen(
     navigateToEnterCode: (phone: String) -> Unit,
     viewModel: MainActivityViewModel = viewModel(MainActivityViewModel::class.java),
 ) {
-    SplitTheBillTheme {
-        // A surface container using the 'background' color from the theme
-        Surface(color = MaterialTheme.colors.background) {
-            Column {
-                var phoneInput by rememberSaveable { mutableStateOf("") }
-                TextField(value = phoneInput, onValueChange = { phoneInput = it })
-                Button(onClick = {
-                    viewModel.enterPhoneAsync(phoneInput, onSuccess = {
-                        Log.d("PhoneEnterActivity", "SMS verification code sent")
-                        navigateToEnterCode(phoneInput)
-                    })
-                }) {
-                    Text("Send login code")
-                }
-            }
+    Column {
+        var phoneInput by rememberSaveable { mutableStateOf("") }
+        TextField(value = phoneInput, onValueChange = { phoneInput = it })
+        Button(onClick = {
+            viewModel.enterPhoneAsync(phoneInput, onSuccess = {
+                Log.d("PhoneEnterActivity", "SMS verification code sent")
+                navigateToEnterCode(phoneInput)
+            })
+        }) {
+            Text("Send login code")
         }
     }
 }
@@ -44,5 +39,9 @@ fun PhoneEnterScreen(
 @Preview
 @Composable
 fun PhoneEnterPreview() {
-    PhoneEnterScreen(navigateToEnterCode = {})
+    SplitTheBillTheme {
+        Surface(color = MaterialTheme.colors.background) {
+            PhoneEnterScreen(navigateToEnterCode = {})
+        }
+    }
 }

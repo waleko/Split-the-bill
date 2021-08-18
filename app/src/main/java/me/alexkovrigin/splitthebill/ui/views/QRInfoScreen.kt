@@ -21,20 +21,15 @@ fun QRInfoScreen(
     qr: String,
     viewModel: MainActivityViewModel = viewModel(MainActivityViewModel::class.java)
 ) {
-    SplitTheBillTheme {
-        // A surface container using the 'background' color from the theme
-        Surface(color = MaterialTheme.colors.background) {
-            Column {
-                val state = viewModel.getLiveReceipt(qr).observeAsState()
-                val receipt by rememberSaveable { state }
-                Text(text = receipt?.dateTime.orEmpty())
-                LazyColumn {
-                    items(receipt?.items.orEmpty()) {
-                        Row {
-                            Text(text = it.name)
-                            Text(text = it.sum.toString())
-                        }
-                    }
+    Column {
+        val state = viewModel.getReceiptFromDB(qr).observeAsState()
+        val receipt by rememberSaveable { state }
+        Text(text = receipt?.dateTime.orEmpty())
+        LazyColumn {
+            items(receipt?.items.orEmpty()) {
+                Row {
+                    Text(text = it.name)
+                    Text(text = it.displaySum)
                 }
             }
         }
@@ -44,5 +39,9 @@ fun QRInfoScreen(
 @Preview
 @Composable
 fun QRInfoScreenPreview() {
-    QRInfoScreen(qr = "skibidi")
+    SplitTheBillTheme {
+        Surface(color = MaterialTheme.colors.background) {
+            QRInfoScreen(qr = "skibidi")
+        }
+    }
 }
