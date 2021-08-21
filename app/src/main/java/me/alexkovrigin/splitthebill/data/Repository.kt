@@ -10,6 +10,7 @@ import me.alexkovrigin.splitthebill.PREF_SESSION_ID
 import me.alexkovrigin.splitthebill.data.entity.Item
 import me.alexkovrigin.splitthebill.data.entity.Receipt
 import me.alexkovrigin.splitthebill.data.entity.ReceiptWithItems
+import me.alexkovrigin.splitthebill.data.entity.User
 import me.alexkovrigin.splitthebill.services.api.FNSApi
 import me.alexkovrigin.splitthebill.services.api.LoginCodeInfo
 import me.alexkovrigin.splitthebill.services.api.QRCodeInfo
@@ -182,4 +183,6 @@ class Repository private constructor(private val context: Context) :
 
     override fun onSharedPreferenceChanged(p0: SharedPreferences?, p1: String?) {
     }
+
+    fun getAllUsers(): LiveData<List<User>> = dao.allUsers()
 }

@@ -73,6 +73,8 @@ class MainActivityViewModel(app: Application) : AndroidViewModel(app) {
 
     fun getReceiptFromDB(qr: String) = repo.loadReceipt(qr)
 
+    fun getAllUsers() = repo.getAllUsers()
+
     /**
      * Debug only. Remove on production
      */
