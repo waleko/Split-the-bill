@@ -14,6 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import me.alexkovrigin.splitthebill.ui.theme.SplitTheBillTheme
 import me.alexkovrigin.splitthebill.ui.views.CameraScreen
+import me.alexkovrigin.splitthebill.ui.views.PayerSelectScreen
 import me.alexkovrigin.splitthebill.ui.views.PhoneEnterScreen
 import me.alexkovrigin.splitthebill.ui.views.QRInfoScreen
 import me.alexkovrigin.splitthebill.ui.views.SMSCodeScreen
@@ -79,6 +80,17 @@ class MainActivity : ComponentActivity() {
                             QRInfoScreen(
                                 qr = qr,
                                 viewModel = viewModel
+                            )
+                        }
+                        composable(
+                            "payerSelection/{qr}"
+                            ) { backStackEntry ->
+                            val qr = backStackEntry.arguments?.getString("qr") ?: error("")
+                            PayerSelectScreen(
+                                viewModel = viewModel,
+                                navigateToReceiptSplitting = { users ->
+                                    println("$qr $users")
+                                }
                             )
                         }
                     }

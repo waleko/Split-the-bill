@@ -1,6 +1,7 @@
 package me.alexkovrigin.splitthebill.util
 
 import androidx.compose.ui.graphics.Color
+import me.alexkovrigin.splitthebill.data.entity.User
 
 object PaletteUtils {
     val palette: List<Color> = listOf(
@@ -9,7 +10,7 @@ object PaletteUtils {
         Color.Green
     )
 
-    fun pickColorForUser(userIndex: Int): Color {
+    fun pickColorForUser(user: User, userIndex: Int): Color {
         return palette[userIndex % palette.size]
     }
 

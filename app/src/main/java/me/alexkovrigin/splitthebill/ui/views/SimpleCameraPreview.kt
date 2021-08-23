@@ -59,7 +59,7 @@ fun SimpleCameraPreview(
                         if (found)
                             return@synchronized
                         Log.d("CameraScreen", "Processing $qr")
-                        if (Regex("t=\\d{8}.*&s=[\\d.]*&fn=\\d*&i=\\d*&fp=\\d*&n=\\d*").matchEntire(
+                        if (Regex("([a-z]+=[a-zA-Z\\d.]*&)*([a-z]+=[a-zA-Z\\d.]*)").matchEntire(
                                 qr
                             ) == null
                         )

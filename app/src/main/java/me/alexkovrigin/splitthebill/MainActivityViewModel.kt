@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import me.alexkovrigin.splitthebill.data.Repository
+import me.alexkovrigin.splitthebill.data.entity.User
 import me.alexkovrigin.splitthebill.services.api.ReceiptInfo
 import me.alexkovrigin.splitthebill.util.Result
 
@@ -74,6 +75,10 @@ class MainActivityViewModel(app: Application) : AndroidViewModel(app) {
     fun getReceiptFromDB(qr: String) = repo.loadReceipt(qr)
 
     fun getAllUsers() = repo.getAllUsers()
+
+    fun addUser(user: User) = viewModelScope.launch {
+        repo.addUser(user)
+    }
 
     /**
      * Debug only. Remove on production

@@ -161,6 +161,12 @@ class Repository private constructor(private val context: Context) :
 
     fun loadReceipt(qr: String): LiveData<ReceiptWithItems?> = dao.receiptWithItemsByQR(qr)
 
+    fun getAllUsers(): LiveData<List<User>> = dao.allUsers()
+
+    suspend fun addUser(user: User) {
+        dao.insertUsers(user)
+    }
+
     /**
      * Debug only. Remove on production
      */
@@ -183,6 +189,4 @@ class Repository private constructor(private val context: Context) :
 
     override fun onSharedPreferenceChanged(p0: SharedPreferences?, p1: String?) {
     }
-
-    fun getAllUsers(): LiveData<List<User>> = dao.allUsers()
 }
