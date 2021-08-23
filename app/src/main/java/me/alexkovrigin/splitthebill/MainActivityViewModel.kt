@@ -3,13 +3,10 @@ package me.alexkovrigin.splitthebill
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import me.alexkovrigin.splitthebill.data.Repository
 import me.alexkovrigin.splitthebill.data.entity.User
-import me.alexkovrigin.splitthebill.services.api.ReceiptInfo
 import me.alexkovrigin.splitthebill.util.Result
 
 class MainActivityViewModel(app: Application) : AndroidViewModel(app) {

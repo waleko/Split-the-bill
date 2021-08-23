@@ -84,7 +84,7 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(
                             "payerSelection/{qr}"
-                            ) { backStackEntry ->
+                        ) { backStackEntry ->
                             val qr = backStackEntry.arguments?.getString("qr") ?: error("")
                             PayerSelectScreen(
                                 viewModel = viewModel,

@@ -7,7 +7,7 @@ import kotlinx.parcelize.Parcelize
 
 @Entity(tableName = "Users")
 @Parcelize
-data class User constructor (
+data class User(
     @PrimaryKey
     val userId: String,
     val displayName: String

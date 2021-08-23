@@ -1,6 +1,5 @@
 package me.alexkovrigin.splitthebill.data
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
@@ -37,7 +36,8 @@ interface BillDao {
     @Transaction
     suspend fun insertReceiptInfo(qr: String, receiptInfo: ReceiptInfo) {
         val receipt = Receipt(qr, receiptInfo)
-        val items = receiptInfo.items.mapIndexed { index, itemInfo -> Item(qr, itemInfo, index) }.toTypedArray()
+        val items = receiptInfo.items.mapIndexed { index, itemInfo -> Item(qr, itemInfo, index) }
+            .toTypedArray()
 
         insertReceipts(receipt)
         insertItems(*items)

@@ -6,7 +6,7 @@ import androidx.room.Relation
 import me.alexkovrigin.splitthebill.services.api.ReceiptInfo
 
 @Entity(tableName = "LoadedReceipts")
-open class Receipt (
+open class Receipt(
     @PrimaryKey
     open val qr: String,
     open val dateTime: String,
@@ -22,7 +22,7 @@ open class Receipt (
         get() = _retailPlace ?: "Unknown"
 }
 
-class ReceiptWithItems (
+class ReceiptWithItems(
     override val qr: String,
     override val dateTime: String,
     override val _retailPlace: String?,

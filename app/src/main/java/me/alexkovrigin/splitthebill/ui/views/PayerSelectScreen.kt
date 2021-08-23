@@ -47,9 +47,12 @@ fun PayerSelectScreen(
             FlowRow {
                 selectedUsers.forEachIndexed { index, user ->
                     println(user)
-                    Chip(label = user.displayName, color = PaletteUtils.pickColorForUser(user, index), onClose = {
-                        selectedUsers.removeAt(index)
-                    })
+                    Chip(
+                        label = user.displayName,
+                        color = PaletteUtils.pickColorForUser(user, index),
+                        onClose = {
+                            selectedUsers.removeAt(index)
+                        })
                 }
             }
             Spacer(modifier = Modifier.height(8.dp))
@@ -69,7 +72,6 @@ fun PayerSelectScreen(
             }
         }
 
-
     }
 }
 
@@ -79,7 +81,7 @@ fun PayerSelectScreen() {
     SplitTheBillTheme {
         Surface(color = MaterialTheme.colors.background) {
             PayerSelectScreen(
-                navigateToReceiptSplitting = {_ -> }
+                navigateToReceiptSplitting = { _ -> }
             )
         }
     }

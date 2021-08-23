@@ -7,14 +7,11 @@ import androidx.lifecycle.LiveData
 import androidx.preference.PreferenceManager
 import me.alexkovrigin.splitthebill.PREF_REFRESH_TOKEN
 import me.alexkovrigin.splitthebill.PREF_SESSION_ID
-import me.alexkovrigin.splitthebill.data.entity.Item
-import me.alexkovrigin.splitthebill.data.entity.Receipt
 import me.alexkovrigin.splitthebill.data.entity.ReceiptWithItems
 import me.alexkovrigin.splitthebill.data.entity.User
 import me.alexkovrigin.splitthebill.services.api.FNSApi
 import me.alexkovrigin.splitthebill.services.api.LoginCodeInfo
 import me.alexkovrigin.splitthebill.services.api.QRCodeInfo
-import me.alexkovrigin.splitthebill.services.api.ReceiptInfo
 import me.alexkovrigin.splitthebill.services.api.RefreshSessionInfo
 import me.alexkovrigin.splitthebill.services.api.RequestSMSInfo
 import me.alexkovrigin.splitthebill.services.api.client_secret
@@ -29,8 +26,6 @@ import okhttp3.Response
 import okhttp3.Route
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import kotlin.math.log
-import kotlin.random.Random
 
 class Repository private constructor(private val context: Context) :
     SharedPreferences.OnSharedPreferenceChangeListener, Authenticator {
