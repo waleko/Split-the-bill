@@ -16,15 +16,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import me.alexkovrigin.splitthebill.data.entity.User
+import me.alexkovrigin.splitthebill.ui.views.common.PriceText
 import me.alexkovrigin.splitthebill.utilities.PaletteUtils
-import me.alexkovrigin.splitthebill.utilities.asRubles
 
 @Composable
 fun UserSplittingCard(
@@ -39,12 +36,12 @@ fun UserSplittingCard(
         shape = MaterialTheme.shapes.small,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 4.dp, vertical = 4.dp)
+            .padding(horizontal = 4.dp, vertical = 8.dp)
             .clickable { onCheckedChange(sum == null) },
         elevation = 4.dp
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp)
+            modifier = Modifier.padding(horizontal = 4.dp, vertical = 12.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Checkbox(
@@ -53,24 +50,21 @@ fun UserSplittingCard(
                     onCheckedChange = onCheckedChange,
                 )
                 Spacer(
-                    modifier = Modifier.width(4.dp)
+                    modifier = Modifier.width(8.dp)
                 )
                 Text(
                     text = user.displayName,
-                    style = MaterialTheme.typography.h6
+                    style = MaterialTheme.typography.h6,
+                    fontSize = 24.sp
                 )
                 Row(
                     horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 4.dp),
                 ) {
-                    Text(
-                        text = if (sum != null)
-                            buildAnnotatedString {
-                                withStyle(MaterialTheme.typography.body2.toSpanStyle().copy(fontWeight = FontWeight.Bold)) { append(sum.asRubles()) }
-                                append(" rub.")
-                            } else AnnotatedString("")
-                    )
+                    PriceText(value = sum)
                 }
             }
         }

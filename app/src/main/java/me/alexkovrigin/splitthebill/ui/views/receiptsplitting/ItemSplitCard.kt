@@ -2,19 +2,16 @@ package me.alexkovrigin.splitthebill.ui.views.receiptsplitting
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -28,6 +25,8 @@ import com.google.accompanist.pager.calculateCurrentOffsetForPage
 import com.google.accompanist.pager.rememberPagerState
 import me.alexkovrigin.splitthebill.data.entity.Item
 import me.alexkovrigin.splitthebill.data.entity.User
+import me.alexkovrigin.splitthebill.ui.views.common.Examples
+import me.alexkovrigin.splitthebill.ui.views.common.ItemDisplay
 import me.alexkovrigin.splitthebill.viewmodels.ReceiptSplittingViewModel
 import kotlin.math.absoluteValue
 
@@ -45,7 +44,7 @@ fun PagerScope.ItemSplitCard(
         splitting = receiptSplittingViewModel.rc.splitting[page]
             ?: error("No $page page in the VM for $item"),
         onItemSplitChanged = { page, userIndex, enabled ->
-            receiptSplittingViewModel.rc.switchUser(page, userIndex, enabled)
+            receiptSplittingViewModel.rc.simpleSwitchUser(page, userIndex, enabled)
         }
     )
 }
@@ -81,18 +80,14 @@ private fun PagerScope.ItemSplitCard(
                     fraction = 1f - pageOffset.coerceIn(0f, 1f)
                 )
             }
-            .fillMaxWidth(0.8f)
-            .fillMaxHeight(0.8f)
+            .fillMaxWidth(0.9f)
+            .fillMaxHeight(0.9f)
     ) {
         Box(
-            modifier = Modifier.padding(10.dp)
+            modifier = Modifier.padding(horizontal = 4.dp, vertical = 10.dp)
         ) {
             Column {
-                Row {
-                    Text(text = item.name)
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(text = item.displaySum)
-                }
+                ItemDisplay(item = item)
                 Spacer(
                     modifier = Modifier.height(20.dp)
                 )
@@ -119,14 +114,7 @@ fun ItemSplitCardPreview() {
         state = pagerState,
         modifier = Modifier.fillMaxSize()
     ) { page ->
-        val item = Item(
-            qr = "qr-code",
-            name = "Banana #$page",
-            _raw_priceForSingle = 100,
-            _raw_sum = 300,
-            quantity = 3.0,
-            positionInReceipt = 0
-        )
+        val item = Examples.SimpleItem
         ItemSplitCard(
             item = item,
             page = page,

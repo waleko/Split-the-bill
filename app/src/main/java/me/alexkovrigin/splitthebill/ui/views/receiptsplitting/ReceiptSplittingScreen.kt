@@ -1,8 +1,13 @@
 package me.alexkovrigin.splitthebill.ui.views.receiptsplitting
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -31,14 +36,28 @@ fun ReceiptSplittingScreen(
 
     val pagerState = rememberPagerState(pageCount = pageCount)
 
-    HorizontalPager(
-        state = pagerState,
+    val animationScope = rememberCoroutineScope()
+
+    Column(
         modifier = Modifier.fillMaxSize()
-    ) { page ->
-        ItemSplitCard(
-            item = receipt.items[page],
-            page = page,
-            receiptSplittingViewModel = receiptSplittingViewModel
-        )
+    ) {
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier
+                .fillMaxHeight(0.9f)
+                .fillMaxWidth()
+        ) { page ->
+            ItemSplitCard(
+                item = receipt.items[page],
+                page = page,
+                receiptSplittingViewModel = receiptSplittingViewModel
+            )
+        }
+        Column(modifier = Modifier.fillMaxHeight(), verticalArrangement = Arrangement.Bottom) {
+            PagerNavButtons(pagerState, animationScope) {
+                // TODO: 25.08.2021 validate and navigate to summary
+            }
+        }
     }
 }
+

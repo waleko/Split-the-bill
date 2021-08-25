@@ -7,6 +7,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import kotlinx.parcelize.Parcelize
 import me.alexkovrigin.splitthebill.services.api.ItemInfo
+import me.alexkovrigin.splitthebill.utilities.asDisplay
 import me.alexkovrigin.splitthebill.utilities.asRubles
 import kotlin.math.min
 
@@ -74,12 +75,14 @@ class Item(
         get() = _raw_priceForSingle.asRubles()
     val displaySum: String
         get() = _raw_sum.asRubles()
+    val displayQuantity: String
+        get() = quantity.asDisplay()
 
     /**
      * Merges two items
      */
     operator fun plus(other: Item): Item {
-        require(this.qr == other.qr) {"Cannot add items from different receipts"}
+        require(this.qr == other.qr) { "Cannot add items from different receipts" }
         val newName = if (this.name == other.name) {
             this.name
         } else {
