@@ -16,8 +16,8 @@ object PaletteUtils {
     )
 
     fun pickColorForUser(user: User): Color {
-        val hashCode = user.hashCode()
-        val randomIndex = ((hashCode.toULong() * 17UL) % usersPalette.size.toULong()).toInt()
+        val hashCode = user.hashCode().toLong()
+        val randomIndex = ((hashCode * 17) % usersPalette.size).toInt()
         return usersPalette[randomIndex]
     }
 }
