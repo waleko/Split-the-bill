@@ -130,7 +130,7 @@ fun ItemSplitCardPreview() {
         ItemSplitCard(
             item = item,
             page = page,
-            users = mutableListOf(
+            users = listOf(
                 User("Alex", "Alex"),
                 User("Bill", "Bill"),
                 User("Charlie", "Charlie")
