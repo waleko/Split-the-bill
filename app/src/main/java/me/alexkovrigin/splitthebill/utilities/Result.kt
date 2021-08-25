@@ -1,4 +1,4 @@
-package me.alexkovrigin.splitthebill.util
+package me.alexkovrigin.splitthebill.utilities
 
 /**
  * A generic class that holds a value with its loading status.

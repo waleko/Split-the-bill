@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import me.alexkovrigin.splitthebill.data.entity.Item
 import me.alexkovrigin.splitthebill.data.entity.Receipt
 import me.alexkovrigin.splitthebill.data.entity.User
-import me.alexkovrigin.splitthebill.util.SingletonHolder
+import me.alexkovrigin.splitthebill.utilities.SingletonHolder
 
 @Database(
     entities = [

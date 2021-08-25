@@ -1,4 +1,4 @@
-package me.alexkovrigin.splitthebill.util
+package me.alexkovrigin.splitthebill.utilities
 
 open class SingletonHolder<out T : Any, in A>(private val creator: (A) -> T) {
     @Volatile

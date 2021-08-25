@@ -15,10 +15,10 @@ import me.alexkovrigin.splitthebill.services.api.QRCodeInfo
 import me.alexkovrigin.splitthebill.services.api.RefreshSessionInfo
 import me.alexkovrigin.splitthebill.services.api.RequestSMSInfo
 import me.alexkovrigin.splitthebill.services.api.client_secret
-import me.alexkovrigin.splitthebill.util.CallNotExecutedException
-import me.alexkovrigin.splitthebill.util.Result
-import me.alexkovrigin.splitthebill.util.SingletonHolder
-import me.alexkovrigin.splitthebill.util.invokeAsync
+import me.alexkovrigin.splitthebill.utilities.CallNotExecutedException
+import me.alexkovrigin.splitthebill.utilities.Result
+import me.alexkovrigin.splitthebill.utilities.SingletonHolder
+import me.alexkovrigin.splitthebill.utilities.invokeAsync
 import okhttp3.Authenticator
 import okhttp3.OkHttpClient
 import okhttp3.Request

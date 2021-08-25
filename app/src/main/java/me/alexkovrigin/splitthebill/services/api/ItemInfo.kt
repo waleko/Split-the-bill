@@ -1,7 +1,7 @@
 package me.alexkovrigin.splitthebill.services.api
 
 import com.google.gson.annotations.SerializedName
-import me.alexkovrigin.splitthebill.util.asRubles
+import me.alexkovrigin.splitthebill.utilities.asRubles
 
 data class ItemInfo(
     val name: String,

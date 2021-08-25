@@ -11,13 +11,18 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import me.alexkovrigin.splitthebill.data.entity.User
 import me.alexkovrigin.splitthebill.ui.theme.SplitTheBillTheme
-import me.alexkovrigin.splitthebill.ui.views.CameraScreen
-import me.alexkovrigin.splitthebill.ui.views.PayerSelectScreen
-import me.alexkovrigin.splitthebill.ui.views.PhoneEnterScreen
-import me.alexkovrigin.splitthebill.ui.views.QRInfoScreen
-import me.alexkovrigin.splitthebill.ui.views.SMSCodeScreen
+import me.alexkovrigin.splitthebill.ui.views.camera.CameraScreen
+import me.alexkovrigin.splitthebill.ui.views.userselection.PayerSelectScreen
+import me.alexkovrigin.splitthebill.ui.views.login.PhoneEnterScreen
+import me.alexkovrigin.splitthebill.ui.views.receiptsplitting.ReceiptSplittingScreen
+import me.alexkovrigin.splitthebill.ui.views.login.SMSCodeScreen
+import me.alexkovrigin.splitthebill.viewmodels.MainActivityViewModel
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -25,6 +30,7 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var cameraExecutor: ExecutorService
 
+    @ExperimentalPagerApi
     @ExperimentalPermissionsApi
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -68,17 +74,21 @@ class MainActivity : ComponentActivity() {
                                 navigateHome = { navController.navigate("home") },
                                 navigateToQR = { qr ->
                                     viewModel.loadReceiptAsync(qr, onSuccess = {})
-                                    navController.navigate("ticketInfo/$qr")
+                                    navController.navigate("payerSelection/$qr")
                                 },
                                 viewModel = viewModel
                             )
                         }
                         composable(
-                            "ticketInfo/{qr}"
+                            "ticketInfo/{qr}?users={users}"
                         ) { backStackEntry ->
-                            val qr = backStackEntry.arguments?.getString("qr") ?: error("")
-                            QRInfoScreen(
+                            val qr = backStackEntry.arguments?.getString("qr") ?: error("No qr provided")
+                            val usersString = backStackEntry.arguments?.getString("users") ?: "[]"
+                            val typeOfT = TypeToken.getParameterized(List::class.java, User::class.java).type
+                            val users = Gson().fromJson<List<User>>(usersString, typeOfT)
+                            ReceiptSplittingScreen(
                                 qr = qr,
+                                users = users,
                                 viewModel = viewModel
                             )
                         }
@@ -89,7 +99,8 @@ class MainActivity : ComponentActivity() {
                             PayerSelectScreen(
                                 viewModel = viewModel,
                                 navigateToReceiptSplitting = { users ->
-                                    println("$qr $users")
+                                    val usersString = Gson().toJson(users)
+                                    navController.navigate("ticketInfo/$qr?users=$usersString")
                                 }
                             )
                         }

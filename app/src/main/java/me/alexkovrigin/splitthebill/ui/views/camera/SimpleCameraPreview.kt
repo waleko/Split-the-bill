@@ -1,4 +1,4 @@
-package me.alexkovrigin.splitthebill.ui.views
+package me.alexkovrigin.splitthebill.ui.views.camera
 
 import android.util.Log
 import android.view.ViewGroup

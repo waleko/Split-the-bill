@@ -1,4 +1,4 @@
-package me.alexkovrigin.splitthebill.ui.views
+package me.alexkovrigin.splitthebill.ui.views.camera
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,7 +15,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionRequired
 import com.google.accompanist.permissions.rememberPermissionState
-import me.alexkovrigin.splitthebill.MainActivityViewModel
+import me.alexkovrigin.splitthebill.viewmodels.MainActivityViewModel
 
 @ExperimentalPermissionsApi
 @Composable

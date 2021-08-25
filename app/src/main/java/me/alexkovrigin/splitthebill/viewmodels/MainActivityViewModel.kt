@@ -1,13 +1,15 @@
-package me.alexkovrigin.splitthebill
+package me.alexkovrigin.splitthebill.viewmodels
 
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import me.alexkovrigin.splitthebill.data.Repository
+import me.alexkovrigin.splitthebill.data.entity.ReceiptWithItems
 import me.alexkovrigin.splitthebill.data.entity.User
-import me.alexkovrigin.splitthebill.util.Result
+import me.alexkovrigin.splitthebill.utilities.Result
 
 class MainActivityViewModel(app: Application) : AndroidViewModel(app) {
     private val repo = Repository.getInstance(app.applicationContext)
@@ -69,7 +71,11 @@ class MainActivityViewModel(app: Application) : AndroidViewModel(app) {
             onSuccess = onSuccess
         )
 
-    fun getReceiptFromDB(qr: String) = repo.loadReceipt(qr)
+    private val qrCache = mutableMapOf<String, LiveData<ReceiptWithItems?>>()
+
+    fun getSaveableReceiptFromDB(qr: String) = qrCache.getOrPut(qr) {
+        repo.loadReceipt(qr)
+    }
 
     fun getAllUsers() = repo.getAllUsers()
 

@@ -1,4 +1,4 @@
-package me.alexkovrigin.splitthebill.util
+package me.alexkovrigin.splitthebill.utilities
 
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.channels.Channel

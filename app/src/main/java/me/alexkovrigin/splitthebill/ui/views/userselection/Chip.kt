@@ -1,4 +1,4 @@
-package me.alexkovrigin.splitthebill.ui.views
+package me.alexkovrigin.splitthebill.ui.views.userselection
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row

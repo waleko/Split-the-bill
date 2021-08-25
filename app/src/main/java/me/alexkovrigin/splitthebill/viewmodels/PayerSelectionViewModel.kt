@@ -1,4 +1,4 @@
-package me.alexkovrigin.splitthebill
+package me.alexkovrigin.splitthebill.viewmodels
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
