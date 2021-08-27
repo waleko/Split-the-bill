@@ -7,7 +7,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import me.alexkovrigin.splitthebill.data.Repository
-import me.alexkovrigin.splitthebill.data.entity.ReceiptWithItems
+import me.alexkovrigin.splitthebill.data.dataviews.ReceiptWithItems
+import me.alexkovrigin.splitthebill.data.entity.SplitReceiptInfo
+import me.alexkovrigin.splitthebill.data.entity.SplittingMap
 import me.alexkovrigin.splitthebill.data.entity.User
 import me.alexkovrigin.splitthebill.utilities.Result
 
@@ -82,6 +84,14 @@ class MainActivityViewModel(app: Application) : AndroidViewModel(app) {
     fun addUser(user: User) = viewModelScope.launch {
         repo.addUser(user)
     }
+
+    fun addNewSplitting(splitReceiptInfo: SplitReceiptInfo, splitting: SplittingMap) =
+        viewModelScope.launch {
+            repo.addNewSplitting(splitReceiptInfo, splitting)
+        }
+
+    fun getSplitReceiptWithItemsAndSplitting(uid: String) =
+        repo.loadSplitReceiptWithItemsAndSplitting(uid)
 
     /**
      * Debug only. Remove on production

@@ -1,5 +1,6 @@
 package me.alexkovrigin.splitthebill.ui.views.receiptsplitting
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -10,11 +11,14 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
+import kotlinx.coroutines.launch
 import me.alexkovrigin.splitthebill.data.entity.User
+import me.alexkovrigin.splitthebill.data.entity.newSplitReceiptInfo
 import me.alexkovrigin.splitthebill.viewmodels.MainActivityViewModel
 import me.alexkovrigin.splitthebill.viewmodels.ReceiptSplittingViewModel
 
@@ -23,6 +27,7 @@ import me.alexkovrigin.splitthebill.viewmodels.ReceiptSplittingViewModel
 fun ReceiptSplittingScreen(
     qr: String,
     users: List<User>,
+    navigateToSummary: (summaryUID: String) -> Unit,
     viewModel: MainActivityViewModel = viewModel(MainActivityViewModel::class.java)
 ) {
     val state = viewModel.getSaveableReceiptFromDB(qr).observeAsState()
@@ -37,6 +42,7 @@ fun ReceiptSplittingScreen(
     val pagerState = rememberPagerState(pageCount = pageCount)
 
     val animationScope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -55,7 +61,24 @@ fun ReceiptSplittingScreen(
         }
         Column(modifier = Modifier.fillMaxHeight(), verticalArrangement = Arrangement.Bottom) {
             PagerNavButtons(pagerState, animationScope) {
-                // TODO: 25.08.2021 validate and navigate to summary
+                val failedList =
+                    receiptSplittingViewModel.rc.validateSplittingAndGetIncompletePages()
+                if (failedList.isNotEmpty()) {
+                    Toast.makeText(context, "Not all items have been split!", Toast.LENGTH_SHORT)
+                        .show()
+                    animationScope.launch {
+                        pagerState.animateScrollToPage(failedList.first())
+                    }
+                    return@PagerNavButtons
+                }
+
+                val splitReceiptInfo = receipt.newSplitReceiptInfo()
+
+                // navigate to summary
+                val splitting = receiptSplittingViewModel.rc.produceSplitting()
+
+                viewModel.addNewSplitting(splitReceiptInfo, splitting)
+                navigateToSummary(splitReceiptInfo.uid)
             }
         }
     }

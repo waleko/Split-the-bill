@@ -14,14 +14,15 @@ import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import me.alexkovrigin.splitthebill.data.entity.User
 import me.alexkovrigin.splitthebill.ui.theme.SplitTheBillTheme
 import me.alexkovrigin.splitthebill.ui.views.camera.CameraScreen
-import me.alexkovrigin.splitthebill.ui.views.userselection.PayerSelectScreen
 import me.alexkovrigin.splitthebill.ui.views.login.PhoneEnterScreen
-import me.alexkovrigin.splitthebill.ui.views.receiptsplitting.ReceiptSplittingScreen
 import me.alexkovrigin.splitthebill.ui.views.login.SMSCodeScreen
+import me.alexkovrigin.splitthebill.ui.views.receiptsplitting.ReceiptSplittingScreen
+import me.alexkovrigin.splitthebill.ui.views.summary.SummaryScreen
+import me.alexkovrigin.splitthebill.ui.views.userselection.PayerSelectScreen
+import me.alexkovrigin.splitthebill.utilities.fromJson
 import me.alexkovrigin.splitthebill.viewmodels.MainActivityViewModel
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -82,26 +83,40 @@ class MainActivity : ComponentActivity() {
                         composable(
                             "ticketInfo/{qr}?users={users}"
                         ) { backStackEntry ->
-                            val qr = backStackEntry.arguments?.getString("qr") ?: error("No qr provided")
+                            val qr =
+                                backStackEntry.arguments?.getString("qr") ?: error("No qr provided")
                             val usersString = backStackEntry.arguments?.getString("users") ?: "[]"
-                            val typeOfT = TypeToken.getParameterized(List::class.java, User::class.java).type
-                            val users = Gson().fromJson<List<User>>(usersString, typeOfT)
+                            val users = Gson().fromJson<List<User>>(usersString)
                             ReceiptSplittingScreen(
                                 qr = qr,
                                 users = users,
-                                viewModel = viewModel
+                                viewModel = viewModel,
+                                navigateToSummary = { summaryUID ->
+                                    navController.navigate("summary/$summaryUID")
+                                }
                             )
                         }
                         composable(
                             "payerSelection/{qr}"
                         ) { backStackEntry ->
-                            val qr = backStackEntry.arguments?.getString("qr") ?: error("")
+                            val qr =
+                                backStackEntry.arguments?.getString("qr") ?: error("No qr provided")
                             PayerSelectScreen(
                                 viewModel = viewModel,
                                 navigateToReceiptSplitting = { users ->
                                     val usersString = Gson().toJson(users)
                                     navController.navigate("ticketInfo/$qr?users=$usersString")
                                 }
+                            )
+                        }
+                        composable(
+                            "summary/{uid}"
+                        ) { backStackEntry ->
+                            val uid = backStackEntry.arguments?.getString("uid")
+                                ?: error("No uid provided")
+                            SummaryScreen(
+                                uid = uid,
+                                viewModel = viewModel
                             )
                         }
                     }

@@ -11,6 +11,11 @@ import me.alexkovrigin.splitthebill.utilities.asDisplay
 import me.alexkovrigin.splitthebill.utilities.asRubles
 import kotlin.math.min
 
+/**
+ * Entity representing an item on a [Receipt].
+ *
+ * @see ItemInfo
+ */
 @Entity(
     tableName = "Items",
     foreignKeys = [
@@ -38,7 +43,7 @@ class Item(
      * Price for an item with quantity equal to 1.0. For example, one piece, one kg, one liter, etc.
      *
      * Warning: This value may be invalid, i.e. not equal to `sum` / `quantity`.
-     * This is due to [plus] operator. See [issue 1](https://github.com/waleko/Split-the-bill/issues/1) for details
+     * This is due to [plus] operator implementation. See [issue 1](https://github.com/waleko/Split-the-bill/issues/1) for details
      */
     @Deprecated(
         "Please only use this value  for displaying. " +

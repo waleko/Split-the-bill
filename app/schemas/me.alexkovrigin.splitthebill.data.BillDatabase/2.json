@@ -1,0 +1,244 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 2,
+    "identityHash": "90351f406fb265b0510aae1d072bd502",
+    "entities": [
+      {
+        "tableName": "Users",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` TEXT NOT NULL, `displayName` TEXT NOT NULL, PRIMARY KEY(`userId`))",
+        "fields": [
+          {
+            "fieldPath": "userId",
+            "columnName": "userId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "userId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "LoadedReceipts",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`qr` TEXT NOT NULL, `dateTime` TEXT NOT NULL, `_retailPlace` TEXT, PRIMARY KEY(`qr`))",
+        "fields": [
+          {
+            "fieldPath": "qr",
+            "columnName": "qr",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dateTime",
+            "columnName": "dateTime",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "_retailPlace",
+            "columnName": "_retailPlace",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "qr"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "Items",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`qr` TEXT NOT NULL, `name` TEXT NOT NULL, `_raw_priceForSingle` INTEGER NOT NULL, `_raw_sum` INTEGER NOT NULL, `quantity` REAL NOT NULL, `positionInReceipt` INTEGER NOT NULL, PRIMARY KEY(`qr`, `name`, `positionInReceipt`), FOREIGN KEY(`qr`) REFERENCES `LoadedReceipts`(`qr`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "qr",
+            "columnName": "qr",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "_raw_priceForSingle",
+            "columnName": "_raw_priceForSingle",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "_raw_sum",
+            "columnName": "_raw_sum",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "quantity",
+            "columnName": "quantity",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "positionInReceipt",
+            "columnName": "positionInReceipt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "qr",
+            "name",
+            "positionInReceipt"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_Items_qr",
+            "unique": false,
+            "columnNames": [
+              "qr"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_Items_qr` ON `${TABLE_NAME}` (`qr`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "LoadedReceipts",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "qr"
+            ],
+            "referencedColumns": [
+              "qr"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "SplitReceiptInfos",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uid` TEXT NOT NULL, `qr` TEXT NOT NULL, PRIMARY KEY(`uid`), FOREIGN KEY(`qr`) REFERENCES `LoadedReceipts`(`qr`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "uid",
+            "columnName": "uid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "qr",
+            "columnName": "qr",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "uid"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_SplitReceiptInfos_qr",
+            "unique": false,
+            "columnNames": [
+              "qr"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_SplitReceiptInfos_qr` ON `${TABLE_NAME}` (`qr`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "LoadedReceipts",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "qr"
+            ],
+            "referencedColumns": [
+              "qr"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "Splittings",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uid` TEXT NOT NULL, `value` TEXT NOT NULL, PRIMARY KEY(`uid`, `value`), FOREIGN KEY(`uid`) REFERENCES `SplitReceiptInfos`(`uid`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "uid",
+            "columnName": "uid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "value",
+            "columnName": "value",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "uid",
+            "value"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": [
+          {
+            "table": "SplitReceiptInfos",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "uid"
+            ],
+            "referencedColumns": [
+              "uid"
+            ]
+          }
+        ]
+      }
+    ],
+    "views": [
+      {
+        "viewName": "ReceiptWithItems",
+        "createSql": "CREATE VIEW `${VIEW_NAME}` AS SELECT * FROM LoadedReceipts LR"
+      },
+      {
+        "viewName": "SplitReceipt",
+        "createSql": "CREATE VIEW `${VIEW_NAME}` AS SELECT SRI.* FROM SplitReceiptInfos SRI"
+      },
+      {
+        "viewName": "SplitReceiptWithItemsAndSplitting",
+        "createSql": "CREATE VIEW `${VIEW_NAME}` AS SELECT SRI.* FROM SplitReceiptInfos SRI"
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '90351f406fb265b0510aae1d072bd502')"
+    ]
+  }
+}

@@ -6,5 +6,5 @@ data class ReceiptInfo(
     val dateTime: String,
     val items: List<ItemInfo>,
     @SerializedName("retailPlace")
-    val _retailPlace: String?
+    val _retailPlace: String?,
 )

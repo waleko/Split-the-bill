@@ -3,6 +3,7 @@ package me.alexkovrigin.splitthebill.services
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import me.alexkovrigin.splitthebill.data.entity.Item
+import me.alexkovrigin.splitthebill.data.entity.SplittingMap
 import me.alexkovrigin.splitthebill.data.entity.User
 
 /**
@@ -10,7 +11,7 @@ import me.alexkovrigin.splitthebill.data.entity.User
  */
 class ReceiptSplitting(
     val users: List<User>,
-    val items: List<Item>,
+    val items: List<Item>
 ) {
     private val userCount = users.size
     private val itemCount = items.size
@@ -67,5 +68,40 @@ class ReceiptSplitting(
         splitting[page]?.set(userIndex, element = if (enabled) 0 else null)
         // update splitting
         runSimpleSplittingUpdate(page)
+    }
+
+    /**
+     * Validates that splitting has been successfully completed.
+     *
+     * Returns failed pages.
+     */
+    fun validateSplittingAndGetIncompletePages(): List<Int> {
+        return splitting.mapValues { (_, list) ->
+            list.any { it != null }
+        }.toList()
+            .filterNot { it.second }
+            .map { it.first }
+    }
+
+    /**
+     * Checks whether splitting has been successfully completed
+     */
+    fun isSplittingCompleted(): Boolean = validateSplittingAndGetIncompletePages().isEmpty()
+
+    fun produceSplitting(): SplittingMap {
+        val splittingMap = mutableMapOf<User, MutableList<Int?>>()
+
+        // TODO: rewrite all so that O(itemCount * userCount) is not required
+        //  inserting `splitting` still requires O(I * U), so this is not severe
+        users.forEach { splittingMap[it] = mutableListOf() }
+
+        splitting.forEach { (_, usersPays) ->
+            usersPays.forEachIndexed { userIndex, sum ->
+                val user = users[userIndex]
+                splittingMap[user]?.add(sum)
+            }
+        }
+
+        return splittingMap
     }
 }

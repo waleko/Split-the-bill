@@ -3,13 +3,27 @@ package me.alexkovrigin.splitthebill.data.entity
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import androidx.room.Relation
 import kotlinx.parcelize.Parcelize
 import me.alexkovrigin.splitthebill.services.api.ReceiptInfo
+import java.time.Instant
+import java.util.Date
 
+/**
+ * Entity representing a receipt loaded from FNS server.
+ *
+ * @see me.alexkovrigin.splitthebill.data.dataviews.ReceiptWithItems
+ */
 @Entity(tableName = "LoadedReceipts")
 @Parcelize
 open class Receipt(
+    /*
+    TODO: same receipt may have multiple correct qr code representations,
+     it would be nice to store them as one receipt, for example by making ticketId
+     primary key. This is not severe though.
+    */
+    /**
+     * Qr code that was used to load the receipt.
+     */
     @PrimaryKey
     open val qr: String,
     open val dateTime: String,
@@ -23,36 +37,7 @@ open class Receipt(
 
     val displayRetailPlace: String
         get() = _retailPlace ?: "Unknown"
-}
 
-@Parcelize
-class ReceiptWithItems(
-    override val qr: String,
-    override val dateTime: String,
-    override val _retailPlace: String?,
-    @Relation(parentColumn = "qr", entityColumn = "qr")
-    val items: List<Item>
-) : Receipt(
-    qr,
-    dateTime,
-    _retailPlace
-) {
-    fun format(): ReceiptWithItems {
-        val receiptsMap = mutableMapOf<String, Item>()
-
-        items.forEach {
-            receiptsMap.merge(it.name, it) { a, b ->
-                a + b
-            }
-        }
-
-        val newItems = receiptsMap.values.toList()
-
-        return ReceiptWithItems(
-            qr = qr,
-            dateTime = dateTime,
-            _retailPlace = _retailPlace,
-            items = newItems
-        )
-    }
+    val date: Date
+        get() = Date.from(Instant.ofEpochSecond(dateTime.toLong()))
 }

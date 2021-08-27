@@ -124,7 +124,7 @@ fun ItemSplitCardPreview() {
                 User("Charlie", "Charlie")
             ),
             splitting = mutableListOf(null, 10, 32000),
-            onItemSplitChanged = {_, _, _ -> }
+            onItemSplitChanged = { _, _, _ -> }
         )
     }
 }

@@ -7,7 +7,9 @@ import androidx.lifecycle.LiveData
 import androidx.preference.PreferenceManager
 import me.alexkovrigin.splitthebill.PREF_REFRESH_TOKEN
 import me.alexkovrigin.splitthebill.PREF_SESSION_ID
-import me.alexkovrigin.splitthebill.data.entity.ReceiptWithItems
+import me.alexkovrigin.splitthebill.data.dataviews.ReceiptWithItems
+import me.alexkovrigin.splitthebill.data.entity.SplitReceiptInfo
+import me.alexkovrigin.splitthebill.data.entity.SplittingMap
 import me.alexkovrigin.splitthebill.data.entity.User
 import me.alexkovrigin.splitthebill.services.api.FNSApi
 import me.alexkovrigin.splitthebill.services.api.LoginCodeInfo
@@ -183,5 +185,12 @@ class Repository private constructor(private val context: Context) :
         PreferenceManager.getDefaultSharedPreferences(context).getString(PREF_REFRESH_TOKEN, null)
 
     override fun onSharedPreferenceChanged(p0: SharedPreferences?, p1: String?) {
+    }
+
+    fun loadSplitReceiptWithItemsAndSplitting(uid: String) =
+        dao.splitReceiptWithItemsAndSplittingByUID(uid)
+
+    suspend fun addNewSplitting(splitReceiptInfo: SplitReceiptInfo, splitting: SplittingMap) {
+        dao.insertNewSplitting(splitReceiptInfo, splitting)
     }
 }
